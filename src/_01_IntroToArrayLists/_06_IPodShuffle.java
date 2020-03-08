@@ -9,7 +9,7 @@ import java.util.Random;
 public class _06_IPodShuffle{
 	public _06_IPodShuffle() {
 		// 1. Use the Song class the play the demo.mp3 file.
-				
+		 new Song("demo.mp3").play();
 				
 		/**
 		 * 2. Congratulations on completing the sound check! * Now we want to make an
@@ -18,10 +18,15 @@ public class _06_IPodShuffle{
 		 * you're really cool, you can stop all the songs, before playing a new one on
 		 * subsequent button clicks.
 		 */
-		
+		 
+		 ArrayList<Song> playList = new ArrayList<Song>(0);
+		 for (int i = 0; i < 5; i++) {
+			 playList.add(new Song("demo.mp3"));
+		 }
 	}
 	
 	public static void main(String[] args) {
 		new _06_IPodShuffle();
+		// Aaaaaaaaaaaaaaaaaaaaaahhh
 	}
 }

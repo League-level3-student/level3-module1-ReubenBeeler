@@ -5,7 +5,7 @@ import java.util.Stack;
 public class _00_StackDemo {
 	public static void main(String[] args) {
 		//Stack of Strings
-		System.out.println("Here is a Stack of Strings: \n");
+		System.out.println("Here is a Stack of Strings:");
 		
 		Stack<String> flavors = new Stack<String>();
 		flavors.push("Strawberry");
@@ -15,8 +15,12 @@ public class _00_StackDemo {
 		flavors.push("Vanilla");
 		flavors.push("Mango");
 		
+		for(String flavor : flavors) {
+			System.out.println(flavor);
+		}
+		
 		//Since Mango was the last one pushed, it will be the first one popped.
-		System.out.println("Popping off the top of the stack:");
+		System.out.println("\nPopping off the top of the stack:");
 		System.out.println(flavors.pop());
 		
 		//Clearing the stack

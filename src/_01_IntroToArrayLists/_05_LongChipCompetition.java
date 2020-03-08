@@ -16,18 +16,25 @@ public class _05_LongChipCompetition {
 
 	public static void main(String[] args) {
 		_05_LongChipCompetition lcc = new _05_LongChipCompetition();
-		
+		lcc.initializeBeatles();
+		float longestLength = (float) 0.0;
+		String beatleName = "John Cena";
+		for (Beatle beatle : lcc.getTheBand()) {
+			for (Chip chip : beatle.getChips()) {
+				if (chip.getLength() > longestLength) {
+					longestLength = (float) chip.getLength();
+					beatleName = beatle.getName();
+				}
+			}
+		}
+		System.out.printf("The Beatle with the longest chip is " + beatleName + ". A total length of %.3f mm.", longestLength);
 	}
 	
 	private void initializeBeatles() {
-		Beatle george = new Beatle("George");
-		Beatle john = new Beatle("John");
-		Beatle paul = new Beatle("Paul");
-		Beatle ringo = new Beatle("Ringo");
-		theBeatles.add(george);
-		theBeatles.add(john);
-		theBeatles.add(paul);
-		theBeatles.add(ringo);
+		theBeatles.add(new Beatle("George"));
+		theBeatles.add(new Beatle("John"));
+		theBeatles.add(new Beatle("Paul"));
+		theBeatles.add(new Beatle("Ringo"));
 	}
 	
 	public ArrayList<Beatle> getTheBand(){
@@ -45,7 +52,7 @@ class Beatle {
 	}
 
 	private void initializePlateOfChips() {
-		int numberOfChips = new Random().nextInt(100);
+		int numberOfChips = new Random().nextInt(10);
 		for (int i = 0; i < numberOfChips; i++) {
 			chips.add(new Chip(new Random().nextDouble() * 10));
 		}
