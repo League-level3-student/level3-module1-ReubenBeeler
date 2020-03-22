@@ -43,6 +43,10 @@ public class _01_IntroToStack {
 		//   66.47984807
 		//   74.12121224
 		
-		//if ()
+		for (int i = stack.size() - 1; i >= 0; i--) {
+			if ((num1 <= stack.get(i) && stack.get(i) <= num2) || (num2 <= stack.get(i) && stack.get(i) <= num1)) {System.out.println(stack.pop());}
+			else {stack.pop();}
+		}
+		
 	}
 }
