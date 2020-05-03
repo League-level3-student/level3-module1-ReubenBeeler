@@ -3,6 +3,8 @@ package _04_HangMan;
 import java.util.Stack;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
@@ -20,17 +23,21 @@ public class HangMan implements KeyListener {
 	
 	JFrame frame = new JFrame();
 	JPanel panel = new JPanel();
-	JLabel label = new JLabel();
+	JLabel tank = new JLabel();
+	JLabel usedLettersLabel = new JLabel();
+	JLabel lifeCounter = new JLabel();
 	
 	int wordCount;
 	String dictionaryName = "dictionary.txt";
 	int dictionaryLength = Utilities.getTotalWordsInFile(dictionaryName);
 	
-	ArrayList<String> alphabet = new ArrayList<String>(Arrays.asList(new String[] {"a", "b", "c", "c", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}));
-	ArrayList<String> answer;
+	ArrayList<String> alphabet;
+	String answer;
+	ArrayList<String> answerSplit;
+	ArrayList<String> usedLetters;
 	String[] letters;
-	boolean dead = false;
-	boolean end = false;
+	boolean end;
+	int lives;
 	
 	ArrayList<String> arrayList = new ArrayList<String>();
 	Stack<String> stack = new Stack<String>();
@@ -47,13 +54,13 @@ public class HangMan implements KeyListener {
 		frame.setSize(1000, 1000);
 		frame.addKeyListener(this);
 		frame.add(panel);
-		panel.add(label);
+		panel.add(tank);
+		panel.add(usedLettersLabel);
+		panel.add(lifeCounter);
 		
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	}
-	
-	void start() {
+		
 		boolean ask = true;
 		while(ask) {
 			wordCount = Integer.parseInt(JOptionPane.showInputDialog("Enter an integer between 1 and " + dictionaryLength + " inclusive:\n"));
@@ -76,52 +83,75 @@ public class HangMan implements KeyListener {
 			stack.push(arrayList.get(random.nextInt(arrayList.size())));
 			arrayList.remove(stack.get(stack.size() - 1));
 		}
+	}
+	
+	void start() {
+		end = false;
+		lives = 8;
+		alphabet = new ArrayList<String>(Arrays.asList(new String[] {"a", "b", "c", "c", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}));
+		usedLetters = new ArrayList<String>();
 		
-		answer = new ArrayList<String>(Arrays.asList(stack.pop().split("")));
-		for (int i = 0; i < answer.size(); i++) {letters[i] = "_";}
+		answer = stack.pop();
+		answerSplit = new ArrayList<String>(Arrays.asList(answer.split("")));
+		letters = new String[answerSplit.size()];
+		for (int i = 0; i < answerSplit.size(); i++) {letters[i] = "_";}
 		
-		setLabel();
-		
-		/*
-		if (dead) {JOptionPane.showMessageDialog(frame, "You Lose");}
-		else {JOptionPane.showMessageDialog(frame, "YOU WIN");}
-		*/
+		setTank();
+		setLifeCounter();
+		setUsedLetters();
 	}
 	
 	void finish() {
-		
+		if (lives == 0) {JOptionPane.showMessageDialog(frame, "You lose. The word is \"" + answer + "\"");}
+		else {JOptionPane.showMessageDialog(frame, "You win! Nice");}
+		start();
 	}
 	
 	void update(String letter) {
 		
-		int change = 0;
-		while (answer.contains(letter)) {
-			letters[answer.indexOf(letter)] = letter;
-			change += 1;
+		boolean correct = false;
+		while (answerSplit.contains(letter)) {
+			letters[answerSplit.indexOf(letter)] = letter;
+			answerSplit.set(answerSplit.indexOf(letter), "_");
+			correct = true;
 		}
-		if (change == 0) {/*Take off one life*/}
+		if (correct) {setTank();}
+		else {lives -= 1; setLifeCounter();}
+		setUsedLetters();
 		
-		//Show letters guessed on a separate JLabel
-		
-		if (!setLabel().contains("_") || dead) {
+		if (!setTank().contains("_") || lives == 0) {
 			end = true;
 			finish();
 		}
 	}
 	
-	String setLabel() {
+	String setTank() {
 		String word = "";
 		for (String letter : letters) {word += letter + " ";}
-		label.setText(word);
+		tank.setText(word);
 		frame.setVisible(true);
 		return word;
+	}
+	
+	void setLifeCounter() {
+		String string = "";
+		for (int i = 0; i < lives; i++) {string += " O";}
+		lifeCounter.setText("\t\tLives:" + string);
+		frame.setVisible(true);
+	}
+	
+	void setUsedLetters() {
+		String list = "";
+		for (String usedLetter : usedLetters) {list += " " + usedLetter;}
+		usedLettersLabel.setText("\t\tUsed Letters:" + list);
+		frame.setVisible(true);
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
 		if (!end) {
-			String letter = KeyEvent.getKeyText(e.getKeyCode()).toLowerCase();
-			if (alphabet.contains(letter)) {update(letter);}
+			String letter = KeyEvent.getKeyText(e.getExtendedKeyCode()).toLowerCase();
+			if (alphabet.contains(letter)) {alphabet.remove(letter); usedLetters.add(letter); update(letter);}
 		}
 	}
 
